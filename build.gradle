@@ -18,26 +18,15 @@ apply plugin: 'io.spring.dependency-management'
 group = 'ru.mozlab.example'
 version = '0.0.1-SNAPSHOT'
 
-jar {
-    baseName = 'gs-messaging-stomp-websocket'
-    version =  '0.1.0'
-}
-
 sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
 }
 
-configurations {
-	compile.exclude module:'spring-boot-starter-tomcat'
-}
-
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('org.springframework.boot:spring-boot-starter-websocket')
-	compile('org.springframework.boot:spring-boot-starter-jetty')
+	compile('org.springframework.boot:spring-boot-starter-webflux')
 	compileOnly('org.projectlombok:lombok')
 	runtime('com.h2database:h2')
 	compile('javax.xml.bind:jaxb-api')
