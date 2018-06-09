@@ -1,19 +1,24 @@
 package ru.mozlab.example.reverseword;
 
-import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.ServerResponse;
 
-@Component
-public class Routes implements WebFilter {
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.RouterFunctions.route;
+import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
-    @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        if (exchange.getRequest().getURI().getPath().equals("/")) {
-            return chain.filter(exchange.mutate().request(exchange.getRequest().mutate().path("/index.html").build()).build());
-        }
-        return chain.filter(exchange);
+@Configuration
+public class Routes {
+    @Bean
+    public RouterFunction<ServerResponse>
+     indexRouter(@Value("classpath:/static/index.html") final Resource indexHtml) {
+        return route(GET("/"),
+                request -> ok().contentType(MediaType.TEXT_HTML)
+                        .syncBody(indexHtml));
     }
 }
