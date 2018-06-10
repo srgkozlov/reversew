@@ -12,21 +12,32 @@ import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Mono;
 import ru.mozlab.example.reverseword.repository.WordRepository;
 
+
+class JSON {
+    private static final ObjectMapper om = new ObjectMapper();
+    public static final String string(Object x) {
+        try {
+            return om.writeValueAsString(x);
+        } catch (JsonProcessingException jp) {}
+        return "";
+    }
+}
+
 @Service
 class WordService {
-    private static final ObjectMapper om = new ObjectMapper();
+
     @Autowired  WordRepository repo;
 
-    public String findAllJSON() {
-        String jsonOut = "";
-        try {
-             jsonOut = om.writeValueAsString(repo.findAll());
-         } catch (JsonProcessingException jp) {}         
-         return jsonOut;
+    private String reverse(String w) {
+        return new StringBuilder(w).reverse().toString();
+    }
+
+    public String findAll() {
+        return JSON.string(repo.findAll());
     }
 
     public String save(String w) {
-        if (!w.isEmpty()) repo.save(new StringBuilder(w).reverse().toString());
+        if (!w.isEmpty()) repo.save(reverse(w));
         return w;
     }
 }
@@ -41,8 +52,8 @@ public class WordWebSocketHandler implements WebSocketHandler {
     public Mono<Void> handle(WebSocketSession sess) {
         return sess.send(sess.receive()
             .map(WebSocketMessage::getPayloadAsText)
-            .map(w->service.save(w))
-            .map(w->service.findAllJSON())
+            .map(service::save)
+            .map(x -> service.findAll())
             .map(sess::textMessage));
     }
 }
