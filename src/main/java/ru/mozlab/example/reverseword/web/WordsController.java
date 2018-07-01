@@ -25,10 +25,6 @@ public class WordsController {
     @Autowired
     WordRepository repo;
 
-// Вернуть список объектов Word
-// HTTP GET /words 
-// STOMP получает /get/words endpoint
-// STOMP отправляет /words
     @MessageMapping("/get/words")
     @GetMapping("/words")
     @SendTo("/words")
@@ -37,10 +33,6 @@ public class WordsController {
         return repo.findAll();
     }
 
-// Сохранить новое 'слово', вернуть список объектов Word
-// HTTP POST /word --data "новое слово" 
-// STOMP получает /word, .body="новое слово"
-// STOMP отправляет /words
     @MessageMapping("/word")
     @PostMapping("/word")
     @SendTo("/words")
